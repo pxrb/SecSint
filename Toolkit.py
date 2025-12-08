@@ -1,4 +1,4 @@
-﻿## ⚠️ Legal & Ethical Disclaimer
+## ⚠️ Legal & Ethical Disclaimer
 #This project is provided as-is, with no guarantees or responsibility from the creator.
 # This repository exists strictly for educational, testing, and cybersecurity research purposes.
 # The user assumes full legal responsibility for any actions performed with the information provided.
@@ -10,6 +10,12 @@
 
 import colorama
 from colorama import Fore, Style
+from colorama.ansi import clear_screen
+import dns.resolver
+import requests
+import socket
+import os
+import re
 
 gradient_colors = [
 (255, 255, 255),
@@ -702,19 +708,22 @@ Version: 1.1.2
 Github: Evadefbi
 See Credits!
 Enjoy!
+Telegram Bot : https://t.me/cstoolkit_bot
 
 ============================================================================================================
 - Educational purposes only!
 - I am NOT eligible for whatever u decide to use this info for!
 ============================================================================================================
-
-1. Infosec
-2. Opsec
-3. Osint
-4. Csint
-5. Encryption
-6. Learning
-7. Credits
+Topics               Tools
+ 
+1. Main Menu         9.  DNS Lookup
+2. Infosec           10. IP Geolocation
+3. Opsec             11. Hash Calculator
+4. Osint             
+5. Csint             
+6. Encryption        
+7. Learning         
+8. Credits          
 
 """
     print(banner)
@@ -809,6 +818,11 @@ def page_four():
 9. Domain Lookup (https://www.whois.com/)
 10. Port scanner (https://nmap.org/)
 11. Network analizer (https://www.wireshark.org/)
+12. IDCrawl FullName Lookup (https://www.idcrawl.com/)
+13. Unter Email Lookup (https://hunter.io/)
+14. WhoIs (https://who.is/)
+15. Tineye Reverse Image (https://tineye.com)
+16. Image Exif  Data Viewer (https://exif.tools/)
 """
     print(smooth_gradient_ascii_chars(banner, gradient_colors))
     nav_bar()
@@ -835,6 +849,7 @@ Disclaimer: These tools are NOT legal use with on ur own responsibility!
 5. Splunk (https://www.splunk.com/)
 6. OpenCTI (https://github.com/OpenCTI-Platform/opencti?utm_source=chatgpt.com)
 7. Wazuh (https://wazuh.com/)
+8. BreachDirectory (https://breachdirectory.org/)
 """
     print(smooth_gradient_ascii_chars(banner, gradient_colors))
     nav_bar()
@@ -856,6 +871,7 @@ def page_six():
 
 1. Veracrypt (https://veracrypt.jp/en/Home.html)'
 2. 7-Zip (https://www.7-zip.org/) 
+3. Cryptomator (https://cryptomator.org/)
 """
     print(smooth_gradient_ascii_chars(banner, gradient_colors))
     nav_bar()
@@ -887,8 +903,213 @@ def page_seven():
     print(smooth_gradient_ascii_chars(banner, gradient_colors))
     nav_bar()
 
+def real_dns_lookup(domain):
+    results = {}
+    record_types = ["A", "AAAA", "MX", "NS", "TXT"]
+    for rtype in record_types:
+        try:
+            answers = dns.resolver.resolve(domain, rtype)
+            results[rtype] = [str(rdata) for rdata in answers]
+        except Exception:
+            results[rtype] = None
+    return results
+
+
+def ip_to_geolocation(ip_address):
+    """
+    Returns geolocation information for a given IP address.
+    """
+    try:
+        url = f"http://ip-api.com/json/{ip_address}"
+        response = requests.get(url, timeout=5)
+        data = response.json()
+
+        if data['status'] == 'success':
+            return {
+                'IP': data.get('query', ''),
+                'Country': data.get('country', ''),
+                'Region': data.get('regionName', ''),
+                'City': data.get('city', ''),
+                'ZIP': data.get('zip', ''),
+                'ISP': data.get('isp', ''),
+                'Org': data.get('org', ''),
+                'Latitude': data.get('lat', ''),
+                'Longitude': data.get('lon', '')
+            }
+        else:
+            return {'error': data.get('message', 'Unable to get location')}
+    except Exception as e:
+        return {'error': str(e)}
+
+def detect_hash(hash_str):
+    hash_str = hash_str.strip()
+    hash_len = len(hash_str)
+    possible = []
+
+    # Hexadecimal check
+    if re.fullmatch(r'[0-9a-fA-F]+', hash_str):
+        if hash_len == 32:
+            possible.append("MD5")
+        if hash_len == 40:
+            possible.append("SHA1")
+        if hash_len == 56:
+            possible.append("SHA224")
+        if hash_len == 64:
+            possible.append("SHA256")
+        if hash_len == 96:
+            possible.append("SHA384")
+        if hash_len == 128:
+            possible.append("SHA512")
+
+    # Base64 check
+    if re.fullmatch(r'[A-Za-z0-9+/=]+', hash_str):
+        possible.append("Base64")
+
+    if not possible:
+        possible.append("Unknown / Invalid format")
+
+    return possible
+
 
 def page_eight():
+    banner = """
+ ██████████   ██████   █████  █████████     █████                         █████                          
+░░███░░░░███ ░░██████ ░░███  ███░░░░░███   ░░███                         ░░███                           
+ ░███   ░░███ ░███░███ ░███ ░███    ░░░     ░███         ██████   ██████  ░███ █████ █████ ████ ████████ 
+ ░███    ░███ ░███░░███░███ ░░█████████     ░███        ███░░███ ███░░███ ░███░░███ ░░███ ░███ ░░███░░███
+ ░███    ░███ ░███ ░░██████  ░░░░░░░░███    ░███       ░███ ░███░███ ░███ ░██████░   ░███ ░███  ░███ ░███
+ ░███    ███  ░███  ░░█████  ███    ░███    ░███      █░███ ░███░███ ░███ ░███░░███  ░███ ░███  ░███ ░███
+ ██████████   █████  ░░█████░░█████████     ███████████░░██████ ░░██████  ████ █████ ░░████████ ░███████ 
+░░░░░░░░░░   ░░░░░    ░░░░░  ░░░░░░░░░     ░░░░░░░░░░░  ░░░░░░   ░░░░░░  ░░░░ ░░░░░   ░░░░░░░░  ░███░░░  
+                                                                                                ░███     
+                                                                                                █████    
+                                                                                               ░░░░░
+============================================================================================================
+"""
+    while True:
+        os.system('cls' if os.name == 'nt' else 'clear')   
+        print(smooth_gradient_ascii_chars(banner, gradient_colors))
+        nav_bar()
+        print("\n[ DNS LOOKUP TOOL ]")
+        print("Press ENTER to skip • Type 'back' or '>' to return to menu\n")
+        
+        domain = input("Enter domain to lookup → ").strip()
+        
+        if domain.lower() in ["back", "b", ">"]:
+            return
+        
+        if not domain:
+            input("\n[!] No domain entered. Press ENTER to try again...")
+            continue
+
+        print("\nResolving", domain, "...\n")
+        result = real_dns_lookup(domain)
+        
+        print("===== DNS RESULTS =====\n")
+        for rtype, data in result.items():
+            print(f"{Fore.CYAN}{rtype}:{Style.RESET_ALL}")
+            if data:
+                for entry in data:
+                    print(f"   ➤ {entry}")
+            else:
+                print(f"   {Fore.RED}(No records found){Style.RESET_ALL}")
+        print("\n" + "="*50 + "\n")
+        
+        input(f"{Fore.YELLOW}Press ENTER to do another lookup...{Style.RESET_ALL}")
+
+def page_nine():
+    banner = """
+ █████ ███████████       █████████                                                                       
+░░███ ░░███░░░░░███     ███░░░░░███                                                                      
+ ░███  ░███    ░███    ███     ░░░   ██████   ██████                                                     
+ ░███  ░██████████    ░███          ███░░███ ███░░███                                                    
+ ░███  ░███░░░░░░     ░███    █████░███████ ░███ ░███                                                    
+ ░███  ░███           ░░███  ░░███ ░███░░░  ░███ ░███                                                    
+ █████ █████           ░░█████████ ░░██████ ░░██████                                                     
+░░░░░ ░░░░░             ░░░░░░░░░   ░░░░░░   ░░░░░░ 
+============================================================================================================
+"""
+    while True:
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print(smooth_gradient_ascii_chars(banner, gradient_colors))
+        nav_bar()
+        print("\n[ IP GEOLOCATION TOOL ]")
+        print("Type 'back' or '>' to return to menu\n")
+        
+        ip_address = input("Enter IP address → ").strip()
+        
+        if ip_address.lower() in ["back", "b", ">"]:
+            return
+            
+        if not ip_address:
+            input("\n[!] No IP entered. Press ENTER to continue...")
+            continue
+
+        print(f"\nLooking up {ip_address}...\n")
+        geo = ip_to_geolocation(ip_address)
+        
+        if 'error' in geo:
+            print(f"{Fore.RED}[!] Error: {geo['error']}{Style.RESET_ALL}")
+        else:
+            print(f"{Fore.WHITE}=== Geolocation Results ==={Style.RESET_ALL}")
+            print(f"IP           : {geo.get('IP', 'N/A')}")
+            print(f"Country      : {geo.get('Country', 'N/A')}")
+            print(f"Region       : {geo.get('Region', 'N/A')}")
+            print(f"City         : {geo.get('City', 'N/A')}")
+            print(f"ZIP          : {geo.get('ZIP', 'N/A')}")
+            print(f"ISP          : {geo.get('ISP', 'N/A')}")
+            print(f"Organization : {geo.get('Org', 'N/A')}")
+            print(f"Lat/Long     : {geo.get('Latitude', 'N/A')}, {geo.get('Longitude', 'N/A')}")
+        
+        print("\n" + "="*50)
+        input(f"\n{Fore.YELLOW}Press ENTER for another lookup...{Style.RESET_ALL}")
+
+def page_ten():
+    banner = """
+ █████   █████                   █████           █████████            ████                               
+░░███   ░░███                   ░░███           ███░░░░░███          ░░███                               
+ ░███    ░███   ██████    █████  ░███████      ███     ░░░   ██████   ░███   ██████                      
+ ░███████████  ░░░░░███  ███░░   ░███░░███    ░███          ░░░░░███  ░███  ███░░███                     
+ ░███░░░░░███   ███████ ░░█████  ░███ ░███    ░███           ███████  ░███ ░███ ░░░                      
+ ░███    ░███  ███░░███  ░░░░███ ░███ ░███    ░░███     ███ ███░░███  ░███ ░███  ███                     
+ █████   █████░░████████ ██████  ████ █████    ░░█████████ ░░████████ █████░░██████                      
+░░░░░   ░░░░░  ░░░░░░░░ ░░░░░░  ░░░░ ░░░░░      ░░░░░░░░░   ░░░░░░░░ ░░░░░  ░░░░░░
+============================================================================================================
+    """
+
+    while True:
+        os.system('cls' if os.name == 'nt' else 'clear')
+        
+        print(smooth_gradient_ascii_chars(banner, gradient_colors))
+        nav_bar()
+        
+        print(f"\n{Fore.WHITE}=== HASH / BASE64 DETECTOR ==={Style.RESET_ALL}")
+        print("Enter a hash or Base64 string")
+        print("Type 'back' or '>' to return to menu\n")
+        
+        user_input = input(f"{Fore.WHITE}Enter Hash → {Style.RESET_ALL}").strip()
+        
+        if user_input.lower() in ["back", "b", ">"]:
+            return
+            
+        if not user_input:
+            input(f"\n{Fore.RED}[!] Nothing entered. Press ENTER to try again...{Style.RESET_ALL}")
+            continue
+
+        print(f"\n{Fore.WHITE}Analyzing...{Style.RESET_ALL}\n")
+        result = detect_hash(user_input)  
+        
+        if result:
+            print(f"{Fore.WHITE}Detected possible type(s):{Style.RESET_ALL}")
+            for r in result:
+                print(f"   ➤ {Fore.WHITE}{r}{Style.RESET_ALL}")
+        else:
+            print(f"{Fore.RED}No known hash type detected.{Style.RESET_ALL}")
+        
+        print("\n" + "="*60)
+        input(f"\n{Fore.YELLOW}Press ENTER for another detection...{Style.RESET_ALL}")
+
+def page_eleven():
     banner = """
     █████████                         █████  ███   █████           
   ███░░░░░███                       ░░███  ░░░   ░░███            
@@ -910,17 +1131,16 @@ def page_eight():
     print(smooth_gradient_ascii_chars(banner, gradient_colors))
     nav_bar()
 
-
 def main():
     import os
 
     if os.name == "nt":
-        os.system("mode con cols=137 lines=45")
+        os.system("mode con cols=137 lines=46")
     else:
         os.system("printf '\\033[8;45;137t'")
 
     current_page = 1
-    total_pages = 8
+    total_pages = 11
 
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -941,6 +1161,12 @@ def main():
             page_seven()
         elif current_page == 8:
             page_eight()  
+        elif current_page == 9:
+            page_nine() 
+        elif current_page == 10:
+            page_ten() 
+        elif current_page == 11:
+            page_eleven() 
 
         choice = input("\nEnter < or > to switch pages (or q to quit): ").strip()
         if choice == '>':
